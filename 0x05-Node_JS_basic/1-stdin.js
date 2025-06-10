@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Reads input from STDIN and displays a welcome message,
- * the user's name, and a closing message.
+ * the user's name, and conditionally a closing message.
  */
 
 // Display the initial welcome message
@@ -20,8 +20,10 @@ process.stdin.on('data', (data) => {
 
 // Listen for 'end' event from stdin
 process.stdin.on('end', () => {
-  // Display the closing message
-  console.log('This important software is now closing');
+  // Only display the closing message if stdin is NOT a TTY (e.g., piped input)
+  if (!process.stdin.isTTY) {
+    console.log('This important software is now closing');
+  }
   // Explicitly exit the process
   process.exit(0);
 });
