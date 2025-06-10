@@ -10,18 +10,18 @@ console.log('Welcome to ALX, what is your name?');
 // Set stdin encoding to handle text input
 process.stdin.setEncoding('utf8');
 
-// Listen for 'data' events from stdin (when user types something)
+// Listen for 'data' events from stdin
 process.stdin.on('data', (data) => {
-  // Convert Buffer to string and remove leading/trailing whitespace (like newline characters from Enter key)
+  // Convert Buffer to string and remove leading/trailing whitespace
   const name = data.toString().trim();
   // Display the user's name
   console.log(`Your name is: ${name}`);
 });
 
-// Listen for 'end' event from stdin (when input stream closes, e.g., Ctrl+D or piped input ends)
+// Listen for 'end' event from stdin
 process.stdin.on('end', () => {
   // Display the closing message
   console.log('This important software is now closing');
-  // Explicitly exit the process (often helpful for child processes to ensure clean termination)
+  // Explicitly exit the process
   process.exit(0);
 });
