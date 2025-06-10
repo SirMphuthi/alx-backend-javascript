@@ -1,28 +1,30 @@
 #!/usr/bin/env node
 
-// Display the initial welcome message using process.stdout.write
-process.stdout.write('Welcome to ALX, what is your name?\n');
+// Display the initial welcome message
+process.stdout.write('Welcome to  Holberton School, what is your name?\n');
+
+// Set stdin encoding
+process.stdin.setEncoding('utf8');
 
 // Check if stdin is a TTY (interactive terminal)
 if (process.stdin.isTTY) {
-  // If in TTY mode, listen for data (user input)
+  // In TTY mode, listen for data (user input)
   process.stdin.on('data', (data) => {
-    // Process the input and display the name
-    const name = data.toString().trim(); // Use trim() for robustness
+    // Process input and display name
+    const name = data.toString().trim();
     process.stdout.write(`Your name is: ${name}\n`);
-    process.exit(); // Exit the program immediately after getting the name
+    process.exit(); // Exit after name is received
   });
 } else {
-  // If not in TTY mode (e.g., piped input like `echo "John" | ...`)
+  // Non-TTY mode (e.g., piped input)
   process.stdin.on('data', (data) => {
-    // Process the input and display the name
-    const name = data.toString().trim(); // Use trim() for robustness
+    // Process input and display name
+    const name = data.toString().trim();
     process.stdout.write(`Your name is: ${name}\n`);
-    process.exit(); // Exit the program immediately after getting the name
+    process.exit(); // Exit after name is received
   });
 
-  // In non-TTY mode, listen for the 'exit' event to display the closing message
-  // This will fire when process.exit() is called in the data handler.
+  // Listen for 'exit' event to display closing message (non-TTY only)
   process.on('exit', () => {
     process.stdout.write('This important software is now closing\n');
   });

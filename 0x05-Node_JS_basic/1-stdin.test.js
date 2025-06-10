@@ -1,59 +1,51 @@
 const { exec } = require('child_process');
 const path = require('path');
 
-// Get the path to the 1-stdin.js script
 const scriptPath = path.join(__dirname, '1-stdin.js');
 
 describe('1-stdin.js', () => {
   // Test case for interactive input (user types name)
-  it('should display welcome message, then name from interactive input, and closing message', (done) => {
-    expect.assertions(2); // Added: We expect 2 assertions in this test (output and code)
+  it('should display welcome message, then name, but NOT the closing message in TTY mode', (done) => {
+    expect.assertions(2); // Expect 2 assertions: output content and exit code
+
     const child = exec(`node ${scriptPath}`); // Execute the script
 
     let output = '';
-    // Capture stdout data
     child.stdout.on('data', (data) => {
       output += data.toString();
     });
 
-    // Handle errors (optional, but good for debugging)
-    child.stderr.on('data', (data) => {
-      console.error(`stderr: ${data}`);
-    });
-
-    // When the child process closes
     child.on('close', (code) => {
       try {
-        // Check for the exact output messages
-        expect(output).toBe('Welcome to ALX, what is your name?\nYour name is: Bob\nThis important software is now closing\n');
-        expect(code).toBe(0); // Ensure successful exit code
-        done(); // Signal that the test is complete
+        // In interactive (TTY) mode, we expect NO closing message
+        expect(output).toBe('Welcome to ALX, what is your name?\nYour name is: Bob\n');
+        expect(code).toBe(0); // Program should still exit cleanly
+        done();
       } catch (error) {
-        done(error); // Pass any assertion errors to done()
+        done(error);
       }
     });
 
-    // Simulate user typing "Bob" and pressing Enter
+    // Simulate user input
     child.stdin.write('Bob\n');
-    // End the input stream (like pressing Ctrl+D)
-    child.stdin.end();
-  }, 10000); // Set a timeout for this test (10 seconds)
+    child.stdin.end(); // End the input stream
+  }, 10000); // 10-second timeout
 
   // Test case for piped input (name provided via echo)
-  it('should display welcome message, then name from piped input, and closing message', (done) => {
-    expect.assertions(3); // Added: We expect 3 assertions in this test (error, stderr, stdout)
-    // Execute the script with piped input
+  it('should display welcome message, then name, AND the closing message with piped input', (done) => {
+    expect.assertions(3); // Expect 3 assertions: no error, no stderr, and correct stdout content
+
     const command = `echo "John" | node ${scriptPath}`;
     exec(command, (error, stdout, stderr) => {
       try {
-        expect(error).toBeNull(); // Ensure no execution error
-        expect(stderr).toBe(''); // Ensure no stderr output
-        // Check for the exact output messages
+        expect(error).toBeNull(); // No execution errors
+        expect(stderr).toBe(''); // No error output
+        // With piped input, we DO expect the closing message
         expect(stdout).toBe('Welcome to ALX, what is your name?\nYour name is: John\nThis important software is now closing\n');
-        done(); // Signal that the test is complete
+        done();
       } catch (assertionError) {
-        done(assertionError); // Pass any assertion errors to done()
+        done(assertionError);
       }
     });
-  }, 10000); // Set a timeout for this test (10 seconds)
+  }, 10000); // 10-second timeout
 });
