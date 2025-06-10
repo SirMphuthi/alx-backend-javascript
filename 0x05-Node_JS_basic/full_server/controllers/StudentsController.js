@@ -1,65 +1,49 @@
-// full_server/controllers/StudentsController.js
 import readDatabase from '../utils';
 
 class StudentsController {
-  /**
-   * Handles GET requests to '/students'.
-   * Displays a list of all students grouped by field.
-   * @param {object} req - The Express request object.
-   * @param {object} res - The Express response object.
-   */
-  static async getAllStudents(req, res) {
-    const databasePath = process.argv[2]; // Get database path from command line arg
+  static getAllStudents(request, response, DATABASE) {
+    readDatabase(DATABASE)
+      .then((fields) => {
+        const students = [];
+        // let count = 0;
+        let msg;
 
-    try {
-      const studentsByField = await readDatabase(databasePath);
-      let responseText = 'This is the list of our students\n';
+        // for (const key of Object.keys(fields)) {
+        //   count += fields[key].length;
+        // }
 
-      // Get fields in alphabetical order (case-insensitive)
-      const fields = Object.keys(studentsByField).sort((a, b) =>
-        a.toLowerCase().localeCompare(b.toLowerCase())
-      );
+        // students.push(`Number of students: ${count}`);
+        students.push('This is the list of our students');
 
-      for (const field of fields) {
-        const studentNames = studentsByField[field];
-        responseText += `Number of students in ${field}: ${studentNames.length}. List: ${studentNames.join(', ')}\n`;
-      }
+        for (const key of Object.keys(fields)) {
+          msg = `Number of students in ${key}: ${
+            fields[key].length
+          }. List: ${fields[key].join(', ')}`;
 
-      res.status(200).send(responseText.trim()); // trim() to remove trailing newline
-    } catch (error) {
-      res.status(500).send(error.message); // Send error message if database not available
-    }
+          students.push(msg);
+        }
+        response.send(200, `${students.join('\n')}`);
+      })
+      .catch(() => {
+        response.send(500, 'Cannot load the database');
+      });
   }
 
-  /**
-   * Handles GET requests to '/students/:major'.
-   * Displays a list of students for a specific major.
-   * @param {object} req - The Express request object.
-   * @param {object} res - The Express response object.
-   */
-  static async getAllStudentsByMajor(req, res) {
-    const databasePath = process.argv[2]; // Get database path from command line arg
-    const { major } = req.params;
+  static getAllStudentsByMajor(request, response, DATABASE) {
+    const { major } = request.params;
 
-    if (!major || (major !== 'CS' && major !== 'SWE')) {
-      return res.status(500).send('Major parameter must be CS or SWE');
-    }
+    if (major !== 'CS' && major !== 'SWE') {
+      response.send(500, 'Major parameter must be CS or SWE');
+    } else {
+      readDatabase(DATABASE)
+        .then((fields) => {
+          const students = fields[major];
 
-    try {
-      const studentsByField = await readDatabase(databasePath);
-
-      if (!studentsByField[major]) {
-        // If major exists but has no students, return empty list
-        return res.status(200).send(`List:`);
-      }
-
-      const studentNames = studentsByField[major];
-      res.status(200).send(`List: ${studentNames.join(', ')}`);
-    } catch (error) {
-      res.status(500).send(error.message); // Send error message if database not available
+          response.send(200, `List: ${students.join(', ')}`);
+        })
+        .catch(() => response.send(500, 'Cannot load the database'));
     }
   }
 }
 
 export default StudentsController;
-
