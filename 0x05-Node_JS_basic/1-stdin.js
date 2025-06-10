@@ -5,25 +5,22 @@
  */
 
 // Display the initial welcome message
-console.log('Welcome to Holberton School, what is your name?');
+console.log('Welcome to ALX, what is your name?');
 
 // Set stdin encoding to handle text input
 process.stdin.setEncoding('utf8');
 
-// Listen for 'data' events from stdin
+// Listen for 'data' events from stdin (user input)
 process.stdin.on('data', (data) => {
-  // Convert Buffer to string and remove leading/trailing whitespace
+  // Process the input and display the user's name
   const name = data.toString().trim();
-  // Display the user's name
   console.log(`Your name is: ${name}`);
 });
 
-// Listen for 'end' event from stdin
+// Listen for the end of the input stream
 process.stdin.on('end', () => {
-  // Only display the closing message if stdin is NOT a TTY (e.g., piped input)
+  // The 'This important software is now closing' message
+  // should ONLY be displayed if stdin is NOT a TTY (e.g., piped input like `echo "John" | node script.js`)
   if (!process.stdin.isTTY) {
     console.log('This important software is now closing');
   }
-  // Explicitly exit the process
-  process.exit(0);
-});
