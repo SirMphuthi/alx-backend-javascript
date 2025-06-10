@@ -1,7 +1,11 @@
 #!/usr/bin/env node
+/**
+ * Reads input from STDIN and displays a welcome message,
+ * the user's name, and conditionally a closing message.
+ */
 
 // Display the initial welcome message
-process.stdout.write('Welcome to  Holberton School, what is your name?\n');
+process.stdout.write('Welcome to Holberton School, what is your name?\n');
 
 // Set stdin encoding
 process.stdin.setEncoding('utf8');
