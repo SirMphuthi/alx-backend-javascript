@@ -5,7 +5,7 @@
  */
 
 // Display the initial welcome message
-console.log('Welcome to ALX, what is your name?');
+console.log('Welcome to Holberton School, what is your name?');
 
 // Set stdin encoding to handle text input
 process.stdin.setEncoding('utf8');
