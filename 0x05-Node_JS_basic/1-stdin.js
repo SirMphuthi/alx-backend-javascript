@@ -1,26 +1,29 @@
 #!/usr/bin/env node
-/**
- * Reads input from STDIN and displays a welcome message,
- * the user's name, and conditionally a closing message.
- */
 
-// Display the initial welcome message
-console.log('Welcome to ALX, what is your name?');
+// Display the initial welcome message using process.stdout.write
+process.stdout.write('Welcome to ALX, what is your name?\n');
 
-// Set stdin encoding to handle text input
-process.stdin.setEncoding('utf8');
+// Check if stdin is a TTY (interactive terminal)
+if (process.stdin.isTTY) {
+  // If in TTY mode, listen for data (user input)
+  process.stdin.on('data', (data) => {
+    // Process the input and display the name
+    const name = data.toString().trim(); // Use trim() for robustness
+    process.stdout.write(`Your name is: ${name}\n`);
+    process.exit(); // Exit the program immediately after getting the name
+  });
+} else {
+  // If not in TTY mode (e.g., piped input like `echo "John" | ...`)
+  process.stdin.on('data', (data) => {
+    // Process the input and display the name
+    const name = data.toString().trim(); // Use trim() for robustness
+    process.stdout.write(`Your name is: ${name}\n`);
+    process.exit(); // Exit the program immediately after getting the name
+  });
 
-// Listen for 'data' events from stdin (user input)
-process.stdin.on('data', (data) => {
-  // Process the input and display the user's name
-  const name = data.toString().trim();
-  console.log(`Your name is: ${name}`);
-});
-
-// Listen for the end of the input stream
-process.stdin.on('end', () => {
-  // The 'This important software is now closing' message
-  // should ONLY be displayed if stdin is NOT a TTY (e.g., piped input like `echo "John" | node script.js`)
-  if (!process.stdin.isTTY) {
-    console.log('This important software is now closing');
-  }
+  // In non-TTY mode, listen for the 'exit' event to display the closing message
+  // This will fire when process.exit() is called in the data handler.
+  process.on('exit', () => {
+    process.stdout.write('This important software is now closing\n');
+  });
+}
