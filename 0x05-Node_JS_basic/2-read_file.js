@@ -1,69 +1,39 @@
-#!/usr/bin/env node
-const fs = require('fs'); // Import the Node.js file system module for synchronous file reading
+const fs = require('fs');
 
-/**
- * Counts the number of students from a CSV database file.
- * Logs the total number of students and the number of students per field,
- * along with a list of their first names.
- *
- * @param {string} path The path to the CSV database file.
- * @throws {Error} If the database file cannot be loaded.
- */
 function countStudents(path) {
-  let data;
+  let content;
+
   try {
-    // Attempt to read the database file synchronously
-    // Set encoding to 'utf8' to get string data directly
-    data = fs.readFileSync(path, 'utf8');
+    content = fs.readFileSync(path);
   } catch (error) {
-    // If the file is not available or cannot be read, throw an error
     throw new Error('Cannot load the database');
   }
 
-  // Split the data into lines and filter out empty lines (especially trailing ones)
-  const lines = data.split('\n').filter((line) => line.trim() !== '');
+  content = content.toString().split('\n');
+  let students = content.filter((item) => item);
+  students = students.map((item) => item.split(','));
 
-  // Check if there are actual student data lines after filtering out header and empty lines
-  if (lines.length <= 1) { // Only header or no data lines
-    console.log('Number of students: 0');
-    return;
-  }
+  const NUMBER_OF_STUDENTS = students.length ? students.length - 1 : 0;
+  console.log(`Number of students: ${NUMBER_OF_STUDENTS}`);
 
-  // Extract the header (first line) to identify column indices
-  const header = lines[0].split(',');
-  const firstnameIndex = header.indexOf('firstname');
-  const fieldIndex = header.indexOf('field');
+  const fields = {};
 
-  // Ensure 'firstname' and 'field' columns exist
-  if (firstnameIndex === -1 || fieldIndex === -1) {
-    throw new Error('Database header is missing required columns (firstname, field)');
-  }
+  for (const i in students) {
+    if (i !== 0) {
+      if (!fields[students[i][3]]) fields[students[i][3]] = [];
 
-  // Process each student data line
-  const studentByField = {};
-  for (let i = 1; i < lines.length; i += 1) { // Start from the second line to skip header
-    const studentData = lines[i].split(',');
-    const firstname = studentData[firstnameIndex].trim();
-    const field = studentData[fieldIndex].trim();
-
-    // Aggregate students by their field
-    if (!studentByField[field]) {
-      studentByField[field] = [];
+      fields[students[i][3]].push(students[i][0]);
     }
-    studentByField[field].push(firstname);
   }
 
-  const totalStudents = lines.length - 1; // Subtract 1 for the header line
-  console.log(`Number of students: ${totalStudents}`);
+  delete fields.field;
 
-  // Log students per field
-  for (const field in studentByField) {
-    // Use Object.prototype.hasOwnProperty.call to filter unwanted properties from the prototype chain
-    if (Object.prototype.hasOwnProperty.call(studentByField, field)) {
-      const count = studentByField[field].length;
-      const list = studentByField[field].join(', ');
-      console.log(`Number of students in ${field}: ${count}. List: ${list}`);
-    }
+  for (const key of Object.keys(fields)) {
+    console.log(
+      `Number of students in ${key}: ${fields[key].length}. List: ${fields[
+        key
+      ].join(', ')}`,
+    );
   }
 }
 
