@@ -7,13 +7,15 @@
     "test": "mocha",
     "test:0": "mocha 0-calcul.test.js",
     "test:1": "mocha 1-calcul.test.js",
-    "test:2": "mocha 2-calcul_chai.test.js"
+    "test:2": "mocha 2-calcul_chai.test.js",
+    "test:3": "mocha 3-payment.test.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "mocha": "^10.0.0",
-    "chai": "^4.3.7"
+    "chai": "4.3.7",
+    "sinon": "^7.5.0"
   }
 }
