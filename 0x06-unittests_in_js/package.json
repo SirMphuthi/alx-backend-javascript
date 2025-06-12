@@ -11,7 +11,8 @@
     "test:3": "mocha 3-payment.test.js",
     "test:4": "mocha 4-payment.test.js",
     "test:5": "mocha 5-payment.test.js",
-    "test:6": "mocha 6-payment_token.test.js"
+    "test:6": "mocha 6-payment_token.test.js",
+    "test:7": "mocha 7-skip.test.js"
   },
   "keywords": [],
   "author": "",
