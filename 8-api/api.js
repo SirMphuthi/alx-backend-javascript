@@ -20,3 +20,4 @@ if (require.main === module) {
 
 // Export the app for testing purposes (so api.test.js can access it)
 module.exports = app;
+// Single blank line here at EOF
